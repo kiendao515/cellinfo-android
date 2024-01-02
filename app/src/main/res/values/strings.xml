@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">BTL</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="get_cell_info">Get cell info</string>
+    <string name="view_on_map">View on map</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+
+</resources>
