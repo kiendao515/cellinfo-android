@@ -22,6 +22,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,21 +58,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static List<Position> position;
     private ApiManager apiManager;
     private String url = "https://api.findcellid.com/api/look_up";
+    private Handler handler;
+    private Runnable getCellInfoRunnable;
+    private boolean isMapInitialized = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         apiManager = new ApiManager(this);
-        Button getCellInfoButton = findViewById(R.id.btnGetCellInfo);
-        Button showOnMapButton = findViewById(R.id.btnShowOnMap);
-        TextView textView = findViewById(R.id.textView);
-        TextView cellIdText = findViewById(R.id.cellId);
-        TextView mnc = findViewById(R.id.mnc);
-        TextView mcc = findViewById(R.id.mcc);
-        TextView lac = findViewById(R.id.lac);
-        getCellInfoButton.setOnClickListener(new View.OnClickListener() {
+        handler = new Handler(Looper.getMainLooper());
+        getCellInfoRunnable = new Runnable() {
             @Override
-            public void onClick(View view) {
+            public void run() {
+                // Assuming getCellInfoAsync is a method that fetches cell information
                 getCellInfoAsync(new CellInfoCallback() {
                     @Override
                     public void onCellInfoReceived(List<CellTower> receivedCellTower) {
@@ -80,27 +80,77 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             @Override
                             public void onPositionReceived(List<Position> p) {
                                 position = p;
-                                textView.setText(cellTower.toString());
-                                cellIdText.setText(String.valueOf(cellTower.get(0).getCellId()));
-                                mnc.setText(String.valueOf(cellTower.get(0).getMobileNetworkCode()));
-                                mcc.setText(String.valueOf(cellTower.get(0).getMobileCountryCode()));
-                                lac.setText(String.valueOf(cellTower.get(0).getLocationAreaCode()));
                             }
                         });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Update your view with the received data on the UI thread
+                                updateCellTowerDataInView(cellTower);
+                            }
+                        });
+                        // Schedule the next execution
+                        handler.postDelayed(getCellInfoRunnable, 20000); // Schedule to run again after 5 seconds
                     }
                 });
             }
-        });
+        };
 
-        showOnMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                initMap();
-            }
-        });
+        // Start the periodic task immediately when activity starts
+        handler.post(getCellInfoRunnable);
 
+//        Button showOnMapButton = findViewById(R.id.btnShowOnMap);
+//        showOnMapButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!isMapInitialized) {
+//                    initMap();
+//                    isMapInitialized = true;
+//                }
+//                showMap();
+//            }
+//        });
     }
+
+    private void updateCellTowerDataInView(List<CellTower> cellTowers) {
+        LinearLayout container = findViewById(R.id.linear_layout_container);
+        if(container!= null){
+            container.removeAllViews();
+        }
+//      container.removeAllViews(); // Clear existing views
+
+        for (CellTower tower : cellTowers) {
+            // Inflate the card view layout
+            View cardView = getLayoutInflater().inflate(R.layout.card_view_layout, container, false);
+
+            // Find the TextViews in the card layout
+            TextView tvCellId = cardView.findViewById(R.id.tvCellId);
+            TextView tvLocationAreaCode = cardView.findViewById(R.id.tvLocationAreaCode);
+            TextView tvMobileCountryCode = cardView.findViewById(R.id.tvMobileCountryCode);
+            TextView tvMobileNetworkCode = cardView.findViewById(R.id.tvMobileNetworkCode);
+
+            // Set the text for each TextView using the data from the current tower in the loop
+            tvCellId.setText(String.valueOf(tower.getCellId()));
+            tvMobileNetworkCode.setText(String.valueOf(tower.getMobileNetworkCode()));
+            tvMobileCountryCode.setText(String.valueOf(tower.getMobileCountryCode()));
+            tvLocationAreaCode.setText(String.valueOf(tower.getLocationAreaCode()));
+
+            // Add the card view to the container
+            container.addView(cardView);
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Stop the Runnable when the activity is destroyed to avoid memory leaks
+        if (handler != null) {
+            handler.removeCallbacks(getCellInfoRunnable);
+        }
+    }
+
+
     public interface CellInfoCallback {
         void onCellInfoReceived(List<CellTower> cellTower);
     }
@@ -131,25 +181,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         for(int i=0;i< cellTower.size();i++){
             Log.d("cell info tower",cellTower.get(i).toString());
             apiManager.makeApiCall(cellTower.get(i).getMobileNetworkCode(), cellTower.get(i).getMobileCountryCode(),
-                cellTower.get(i).getLocationAreaCode(), cellTower.get(i).getCellId(), "auto", new ApiManager.ApiCallback() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        Log.d("call api", response.toString());
-                        Gson gson = new Gson();
-                        GetPositionResponse apiResponse = gson.fromJson(response.toString(),GetPositionResponse.class);
-                        p.setAddress(apiResponse.getAddress());
-                        p.setLat(apiResponse.getLat());
-                        p.setLon(apiResponse.getLon());
-                        positionList.add(p);
-                    }
+                    cellTower.get(i).getLocationAreaCode(), cellTower.get(i).getCellId(), "auto", new ApiManager.ApiCallback() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            Log.d("call api", response.toString());
+                            Gson gson = new Gson();
+                            GetPositionResponse apiResponse = gson.fromJson(response.toString(),GetPositionResponse.class);
+                            p.setAddress(apiResponse.getAddress());
+                            p.setLat(apiResponse.getLat());
+                            p.setLon(apiResponse.getLon());
+                            positionList.add(p);
+                        }
 
-                    @Override
-                    public void onError(String errorMessage) {
-                        // Handle API error
-                    }
-                });
-        apiCallback.onPositionReceived(positionList);
+                        @Override
+                        public void onError(String errorMessage) {
+                            // Handle API error
+                        }
+                    });
+            apiCallback.onPositionReceived(positionList);
         }
+
     }
     private List<CellTower> getCellInfo(){
         List<CellTower> tower = Collections.synchronizedList(new ArrayList<>());
@@ -175,12 +226,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void initMap() {
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        // Get the map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MainActivity.this);
 
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
     @Override
     public void onMapReady(GoogleMap ggMap) {
@@ -188,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             for(int i=0;i< position.size();i++){
-                    Log.d("init",position.toString());
+                Log.d("init",position.toString());
 //                    LatLng location = new LatLng(position.get(i).getLat(), position.get(i).getLon());
 //                    MarkerOptions markerOptions = new MarkerOptions()
 //                            .position(location)
@@ -199,9 +251,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                    this.googleMap.addMarker(markerOptions);
 //                    this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
 
-                    this.googleMap.addMarker(new MarkerOptions().position(new LatLng(position.get(i).getLat(), position.get(i).getLon())).title(position.get(i).getAddress()));
-                    this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(position.get(i).getLat(), position.get(i).getLon()),16.0f));
+                this.googleMap.addMarker(new MarkerOptions().position(new LatLng(position.get(i).getLat(), position.get(i).getLon())).title(position.get(i).getAddress()));
+                this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(position.get(i).getLat(), position.get(i).getLon()),16.0f));
             }
+        }
+    }
+    private void showMap() {
+        // Hide the list and show the map
+        LinearLayout container = findViewById(R.id.linear_layout_container);
+        container.setVisibility(View.GONE);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getView().setVisibility(View.VISIBLE);
         }
     }
     private Bitmap getMarkerBitmapFromUrl(String url) {

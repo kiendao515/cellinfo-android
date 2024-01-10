@@ -1,125 +1,342 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="" />
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:text = "Cell ID"
-        android:gravity="center"
-        android:textSize = "25dp" />
+    android:layout_height="match_parent">
+    <!-- Bottom Bar with Buttons -->
 
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:id = "@+id/cellId"
-        android:focusable = "true"
-        android:textColorHighlight = "#ff7eff15"
-        android:textColorHint = "#ffff25e6"
-        android:layout_marginTop = "20dp"
-        android:layout_alignParentLeft = "true"
-        android:layout_alignParentStart = "true"
-        android:layout_alignParentRight = "true"
-        android:layout_alignParentEnd = "true" />
+        <!-- Get Cell Info Button -->
+        <!--    <Button-->
+        <!--        android:id="@+id/btnGetCellInfo"-->
+        <!--        android:layout_width="0dp"-->
+        <!--        android:layout_weight="1"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        android:text="Get Cell Info"/>-->
 
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:text = "Location Area Code"
-        android:gravity="center"
-        android:layout_centerHorizontal = "true"
-        android:textSize = "25dp" />
-
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:id = "@+id/lac"
-        android:focusable = "true"
-        android:textColorHighlight = "#ff7eff15"
-        android:textColorHint = "#ffff25e6"
-        android:layout_marginTop = "20dp"
-        android:layout_alignParentLeft = "true"
-        android:layout_alignParentStart = "true"
-        android:layout_alignParentRight = "true"
-        android:layout_alignParentEnd = "true" />
-
-
-
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:text = "Mobile Country Code"
-        android:gravity="center"
-        android:layout_centerHorizontal = "true"
-        android:textSize = "25dp" />
-
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:id = "@+id/mcc"
-        android:focusable = "true"
-        android:textColorHighlight = "#ff7eff15"
-        android:textColorHint = "#ffff25e6"
-        android:layout_marginTop = "20dp"
-        android:layout_alignParentLeft = "true"
-        android:layout_alignParentStart = "true"
-        android:layout_alignParentRight = "true"
-        android:layout_alignParentEnd = "true" />
-
-    <TextView
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:text = "Mobile Network Code"
-        android:gravity="center"
-        android:layout_centerHorizontal = "true"
-        android:textSize = "25dp" />
-
-    <TextView
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:id = "@+id/mnc"
-        android:focusable = "true"
-        android:textColorHighlight = "#ff7eff15"
-        android:textColorHint = "#ffff25e6"
-        android:layout_marginTop = "20dp"
-        android:layout_alignParentLeft = "true"
-        android:layout_alignParentStart = "true"
-        android:layout_alignParentRight = "true"
-        android:layout_alignParentEnd = "true" />
-    <!-- MapView with layout_weight set to 1 -->
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnGetCellInfo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/get_cell_info"
-            android:layout_marginRight="8dp"/>
-
+        <!-- Show on Map Button -->
         <Button
             android:id="@+id/btnShowOnMap"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/view_on_map"
-            android:layout_marginLeft="8dp"/>
-    </LinearLayout>
-</LinearLayout>
+            android:layout_height="wrap_content"
+            android:text="Show on map"/>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/linear_layout_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Repeated CardView for each data entry -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Country Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Country Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Country Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="Mobile Country Code: [value]" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Country Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Country Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150px"
+                android:layout_margin="4dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- Cell ID Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cell ID: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Location Area Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location Area Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Country Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Country Code: [value]"
+                        android:padding="4dp" />
+
+                    <!-- Mobile Network Code Row -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Network Code: [value]"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+<!--    <fragment-->
+<!--        android:id="@+id/map"-->
+<!--        android:name="com.google.android.gms.maps.SupportMapFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:visibility="gone"/> &lt;!&ndash; Initially hidden &ndash;&gt;-->
+
+</FrameLayout>

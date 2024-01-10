@@ -1,41 +1,69 @@
 package com.hust.btl;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import com.hust.btl.ui.main.SectionsPagerAdapter;
-import com.hust.btl.databinding.ActivityMain2Binding;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.ListFragment;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
 
 public class MainActivity2 extends AppCompatActivity {
 
-private ActivityMain2Binding binding;
+    private ViewPager2 viewPager;
+    private TabLayout tabs ;
+    private FragmentStateAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+        viewPager = findViewById(R.id.view_pager);
 
-     binding = ActivityMain2Binding.inflate(getLayoutInflater());
-     setContentView(binding.getRoot());
+        pagerAdapter = new ScreenSlidePagerAdapter(this);
+        viewPager.setAdapter(pagerAdapter);
+        tabs= findViewById(R.id.tabs);
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = binding.fab;
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        new TabLayoutMediator(tabs, viewPager, (tab, position) -> {
+            if (position == 0) {
+                tab.setText("List");
+            } else {
+                tab.setText("Map");
             }
-        });
+        }).attach();
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+        public ScreenSlidePagerAdapter(FragmentActivity fa) {
+            super(fa);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            if (position == 0) {
+                return new ListCellInfo();
+            } else {
+                return new MapsActivity();
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return 2;
+        }
     }
 }
